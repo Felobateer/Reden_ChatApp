@@ -14,7 +14,24 @@ async function createMessage(senderId, receiverId, content) {
 }
 
 // Get messages between two users
-async function getMessages(userId) {
+async function getMessages(senderId, receiverId) {
+  const query =
+    "SELECT * FROM messages WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?) ORDER BY timestamp";
+  try {
+    const [messages] = await pool.execute(query, [
+      senderId,
+      receiverId,
+      receiverId,
+      senderId,
+    ]);
+    return messages; // Return the array of messages
+  } catch (error) {
+    throw new Error(`Error retrieving messages: ${error.message}`);
+  }
+}
+
+// Search messages of the user
+async function searchMessages(userId) {
   const query =
     "SELECT * FROM messages WHERE sender_id = ?  OR receiver_id = ? ORDER BY timestamp";
   try {
@@ -39,5 +56,6 @@ async function deleteMessage(messageId) {
 module.exports = {
   createMessage,
   getMessages,
+  searchMessages,
   deleteMessage,
 };
