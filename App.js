@@ -12,7 +12,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Title children={"Reden"} />
-      <Subtitle children={"a chat app designed for Germany"} />
+      <Subtitle children={"a chat app designed for German"} />
       <TextA children={"From Philip Saadalla"} />
       <TextB children={"built in 2024"} />
       <ActionBtn children={"action"} />

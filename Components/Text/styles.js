@@ -14,14 +14,14 @@ export default styles = StyleSheet.create({
     color: "black",
   },
   texta: {
-    fontFamily: "roboto",
+    fontFamily: "Roboto",
     textAlign: "left",
     fontSize: 14,
     color: "gray",
   },
   textb: {
     texta: {
-      fontFamily: "roboto",
+      fontFamily: "Roboto",
       textAlign: "left",
       fontSize: 14,
       color: "black",
