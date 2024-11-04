@@ -9,6 +9,12 @@ exports.up = function (knex) {
     table.string("last_name").notNullable();
     table.string("email").unique().notNullable();
     table.string("password").notNullable();
+    table
+      .enum("loginDomain", ["system", "facebook", "google"])
+      .defaultTo("system");
+    table.string("photo").nullable();
+    table.enum("gender", ["male", "female", "other"]).nullable();
+    table.string("secondary_email").nullable();
     table.timestamps(true, true);
   });
 };
