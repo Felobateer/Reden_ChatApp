@@ -10,7 +10,7 @@ exports.up = function (knex) {
     table.string("email").unique().notNullable();
     table.string("password").notNullable();
     table
-      .enum("loginDomain", ["system", "facebook", "google"])
+      .enum("login_domain", ["system", "facebook", "google"])
       .defaultTo("system");
     table.string("photo").nullable();
     table.enum("gender", ["male", "female", "other"]).nullable();

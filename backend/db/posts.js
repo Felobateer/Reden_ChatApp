@@ -1,53 +1,83 @@
-// db/posts.js
-const db = require("./config"); // Import your database connection db
+const knex = require("knex")(
+  require("./knexfile")[process.env.NODE_ENV || "development"]
+);
 
-// Create a new post
-async function createPost(userId, content) {
-  const query = "INSERT INTO posts (user_id, content) VALUES (?, ?)";
-  try {
-    const [result] = await db.execute(query, [userId, content]);
-    return result.insertId; // Return the ID of the new post
-  } catch (error) {
-    throw new Error(`Error creating post: ${error.message}`);
+class Post {
+  constructor() {}
+
+  // Create a new post
+  async create(data) {
+    try {
+      const [postId] = await knex("posts").insert({
+        user_id: data.userId,
+        title: data.title,
+        content: data.content,
+        created_at: knex.fn.now(), // Automatically use current timestamp
+        updated_at: knex.fn.now(), // Automatically use current timestamp
+      });
+      return { id: postId };
+    } catch (error) {
+      throw new Error(`Error creating post: ${error.message}`);
+    }
+  }
+
+  // Edit an existing post
+  async editPost(data) {
+    const updatedFields = {
+      title: data.title,
+      content: data.content,
+      updated_at: knex.fn.now(), // Update the timestamp on edit
+    };
+
+    try {
+      const results = await knex("posts")
+        .where({ id: data.postId })
+        .update(updatedFields);
+      return results;
+    } catch (error) {
+      throw new Error(`Error editing post: ${error.message}`);
+    }
+  }
+
+  // Get post by id
+  async getPostById(id) {
+    try {
+      const post = await knex("posts").where({ id }).first();
+      return post;
+    } catch (error) {
+      throw new Error(`Error retrieving post: ${error.message}`);
+    }
+  }
+
+  // Get all posts by a specific user
+  async getPostsByUserId(userId) {
+    try {
+      const posts = await knex("posts").where({ user_id: userId });
+      return posts;
+    } catch (error) {
+      throw new Error(`Error retrieving posts by user: ${error.message}`);
+    }
+  }
+
+  // Get all posts
+  async getAllPosts() {
+    try {
+      const posts = await knex("posts").select("*");
+      return posts;
+    } catch (error) {
+      throw new Error(`Error retrieving posts: ${error.message}`);
+    }
+  }
+
+  // Delete a post
+  async deletePost(postId) {
+    try {
+      const results = await knex("posts").where({ id: postId }).del();
+      return results;
+    } catch (error) {
+      throw new Error(`Error deleting post: ${error.message}`);
+    }
   }
 }
 
-// Get all posts
-async function getPosts() {
-  const query = "SELECT * FROM posts ORDER BY created_at DESC";
-  try {
-    const [posts] = await db.execute(query);
-    return posts; // Return the array of posts
-  } catch (error) {
-    throw new Error(`Error retrieving posts: ${error.message}`);
-  }
-}
-
-// Get a specific post by ID
-async function getPostById(postId) {
-  const query = "SELECT * FROM posts WHERE id = ?";
-  try {
-    const [post] = await db.execute(query, [postId]);
-    return post[0]; // Return the single post
-  } catch (error) {
-    throw new Error(`Error retrieving post: ${error.message}`);
-  }
-}
-
-// Delete a post by ID
-async function deletePost(postId) {
-  const query = "DELETE FROM posts WHERE id = ?";
-  try {
-    const [result] = await db.execute(query, [postId]);
-    return result.affectedRows; // Return the number of deleted rows
-  } catch (error) {
-    throw new Error(`Error deleting post: ${error.message}`);
-  }
-}
-
-module.exports = {
-  createPost,
-  getPosts,
-  getPostById,
-  deletePost,
-};
+module.exports = new Post();

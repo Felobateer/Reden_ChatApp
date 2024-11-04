@@ -1,22 +1,11 @@
-import { UserSchema } from "./users";
-import { ContactSchema } from "./contacts";
-import { createPost, getPosts, getPostById, deletePost } from "./posts";
-import {
-  createMessage,
-  getMessages,
-  searchMessages,
-  deleteMessage,
-} from "./messages";
+const User = require("./users");
+const Contact = require("./contacts");
+const Post = require("./posts");
+const Message = require("./messages");
 
 module.exports = {
-  UserSchema,
-  ContactSchema,
-  createPost,
-  getPosts,
-  getPostById,
-  deletePost,
-  createMessage,
-  getMessages,
-  searchMessages,
-  deleteMessage,
+  User,
+  Contact,
+  Post,
+  Message,
 };

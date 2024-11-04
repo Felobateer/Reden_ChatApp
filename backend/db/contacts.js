@@ -1,58 +1,62 @@
-const db = require("./config");
+const knex = require("knex")(
+  require("./knexfile")[process.env.NODE_ENV || "development"]
+);
 
-class ContactSchema {
+class Contact {
   constructor() {}
 
   // Create a new contact
-  async createContact(firstName, lastName, email) {
-    const query =
-      "INSERT INTO contacts (first_name, last_name, email) VALUES (?, ?, ?)";
-
+  async create(data) {
     try {
-      const [results] = await db.execute(query, [firstName, lastName, email]);
-      return results;
+      const [contactId] = await knex("contacts").insert({
+        user_id: data.userId,
+        first_name: data.firstName,
+        last_name: data.lastName,
+        email: data.email,
+        photo: data.photo,
+        isBlocked: data.isBlocked || false,
+      });
+      return { id: contactId };
     } catch (error) {
       throw new Error(`Error creating contact: ${error.message}`);
     }
   }
 
   // Edit an existing contact
-  async editContact(contactId, firstName, lastName, email) {
-    const query =
-      "UPDATE contacts SET first_name = ?, last_name = ?, email = ? WHERE id = ?";
+  async editContact(data) {
+    const updatedFields = {
+      first_name: data.firstName,
+      last_name: data.lastName,
+      email: data.email,
+      photo: data.photo,
+      isBlocked: data.isBlocked,
+    };
 
     try {
-      const [results] = await db.execute(query, [
-        firstName,
-        lastName,
-        email,
-        contactId,
-      ]);
+      const results = await knex("contacts")
+        .where({ id: data.contactId })
+        .update(updatedFields);
       return results;
     } catch (error) {
       throw new Error(`Error editing contact: ${error.message}`);
     }
   }
 
-  // Get contact by email
-  async getContactByEmail(email) {
-    const query = "SELECT * FROM contacts WHERE email = ?";
-
+  // Get contact by id
+  async getContactById(id) {
     try {
-      const [results] = await db.execute(query, [email]);
-      return results[0]; // Return the first contact found
+      const contact = await knex("contacts").where({ id }).first();
+      return contact;
     } catch (error) {
       throw new Error(`Error retrieving contact: ${error.message}`);
     }
   }
 
-  // Get contact by id
-  async getContactById(id) {
-    const query = "SELECT * FROM contacts WHERE id = ?";
-
+  // Get contact by email
+  async getContactByEmail(email) {
     try {
-      const [results] = await db.execute(query, [id]);
-      return results[0]; // Return the first contact found
+      const contact = await knex("contacts").where({ email }).first();
+      return contact;
     } catch (error) {
       throw new Error(`Error retrieving contact: ${error.message}`);
     }
@@ -60,11 +64,9 @@ class ContactSchema {
 
   // Get all contacts
   async getAllContacts() {
-    const query = "SELECT * FROM contacts";
-
     try {
-      const [results] = await db.execute(query);
-      return results;
+      const contacts = await knex("contacts").select("*");
+      return contacts;
     } catch (error) {
       throw new Error(`Error retrieving contacts: ${error.message}`);
     }
@@ -72,10 +74,8 @@ class ContactSchema {
 
   // Delete a contact
   async deleteContact(contactId) {
-    const query = "DELETE FROM contacts WHERE id = ?";
-
     try {
-      const [results] = await db.execute(query, [contactId]);
+      const results = await knex("contacts").where({ id: contactId }).del();
       return results;
     } catch (error) {
       throw new Error(`Error deleting contact: ${error.message}`);
@@ -83,4 +83,4 @@ class ContactSchema {
   }
 }
 
-module.exports = new ContactSchema();
+module.exports = new Contact();
