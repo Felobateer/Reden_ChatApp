@@ -1,5 +1,5 @@
 const User = require("../db");
-const asyncErrorHandler = require("../middleware/helpers/errorHandler");
+const asyncErrorHandler = require("../middleware/helpers/asyncErrorHandler");
 const sendToken = require("../utils/sendToken");
 const ErrorHandler = require("../utils/errorHandler");
 const bcrypt = require("bcrypt");
@@ -130,10 +130,7 @@ exports.forgotPassword = asyncErrorHandler(async (req, res, next) => {
 // Reset Password
 exports.resetPassword = asyncErrorHandler(async (req, res, next) => {
   // create hash token
-  const resetPasswordToken = crypto
-    .createHash("sha256")
-    .update(req.params.token)
-    .digest("hex");
+  const resetPasswordToken = bcrypt.hash(req.params.token);
 
   const user = await User.findOne({
     resetPasswordToken,
