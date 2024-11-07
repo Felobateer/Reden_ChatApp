@@ -9,6 +9,20 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+app.set("io", io);
+
+io.on("connection", (socket) => {
+  const userId = socket.handshake.query.userId;
+
+  if (userId) {
+    socket.join(`user_${userId}`);
+  }
+
+  socket.on("disconnect", () => {
+    console.log(`User ${userId} disconnect`);
+  });
+});
+
 middleware.middlewareConf(app);
 
 const PORT = process.env.PORT || 3000;
