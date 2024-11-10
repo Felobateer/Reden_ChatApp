@@ -1,25 +1,35 @@
 import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 
-import Login from "../Screens/Auth/login";
-import Signup from "../Screens/Auth/signup";
-import Home from "../Screens/Home/Home";
-import Profile from "../Screens/Settings/Profile";
+import AuthNavigation from "./authNavigation";
+import HomeNavigation from "./homeNavigation";
+import SettingsNavigation from "./settingsNavigation";
 
-const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
-const MainNavigator = () => {
+const MainNavigation = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Signup" component={Signup} />
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Profile" component={Profile} />
-      </Stack.Navigator>
+      <Tab.Navigator initialRouteName="Auth">
+        <Tab.Screen
+          name="Auth"
+          component={AuthNavigation}
+          options={{ headerShown: false }}
+        />
+        <Tab.Screen
+          name="Main"
+          component={HomeNavigation}
+          options={{ headerShown: false }}
+        />
+        <Tab.Screen
+          name="Settings"
+          component={SettingsNavigation}
+          options={{ headerShown: false }}
+        />
+      </Tab.Navigator>
     </NavigationContainer>
   );
 };
 
-export default MainNavigator;
+export default MainNavigation;
