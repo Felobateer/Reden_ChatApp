@@ -1,4 +1,4 @@
-import { Keyboard, View } from "react-native";
+import { Keyboard, View, StyleSheet } from "react-native";
 import { useState } from "react";
 
 import { InputA } from "@/components/inputs";
@@ -44,7 +44,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <View>
+    <View style={styles.loginContainer}>
       <InputA inputValue={credentialsProps[0]} />
       <InputA inputValue={credentialsProps[1]} />
       <ActionA title="Login" onPress={handleBtn} />
@@ -52,3 +52,13 @@ export default function LoginScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  loginContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
+    padding: 10,
+  },
+});
